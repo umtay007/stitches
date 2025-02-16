@@ -58,7 +58,10 @@
     "tailwindcss-animate": "^1.0.7",
     "vaul": "^0.9.6",
     "zod": "^3.24.1",
-    "@upstash/redis": "latest"
+    "@upstash/redis": "latest",
+    "date-fns": "^3.0.0",
+    "react-day-picker": "8.10.1"
+}
   },
   "devDependencies": {
     "@types/node": "^22",
