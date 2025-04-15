@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server"
 import Stripe from "stripe"
+import { headers } from "next/headers"
 
 // Initialize Stripe with your secret key
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
@@ -9,13 +10,19 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
 export async function POST(req: Request) {
   try {
     const { amount } = await req.json()
+    const headersList = headers()
+
+    // Get the host from headers to build absolute URLs
+    const host = headersList.get("host") || "localhost:3000"
+    const protocol = host.includes("localhost") ? "http" : "https"
+    const baseUrl = `${protocol}://${host}`
 
     // Validate input
     if (!amount || amount <= 0) {
       return NextResponse.json({ error: "Invalid amount" }, { status: 400 })
     }
 
-    // Create a Stripe Checkout Session
+    // Create a Stripe Checkout Session with absolute URLs
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["cashapp"],
       line_items: [
@@ -32,8 +39,8 @@ export async function POST(req: Request) {
         },
       ],
       mode: "payment",
-      success_url: `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000"}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000"}/cashapp-pay`,
+      success_url: `${baseUrl}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${baseUrl}/cashapp-pay`,
     })
 
     return NextResponse.json({ sessionId: session.id })
