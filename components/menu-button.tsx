@@ -45,8 +45,8 @@ export function MenuButton() {
             <Button variant="ghost" className="w-full justify-start" onClick={() => handleNavigation("/vouches")}>
               Vouches
             </Button>
-            <Button variant="ghost" className="w-full justify-start" onClick={() => handleNavigation("/cashapp-pay")}>
-              CashApp Pay
+            <Button variant="ghost" className="w-full justify-start" onClick={() => handleNavigation("/pay-me")}>
+              Pay Me
             </Button>
             <Button variant="ghost" className="w-full justify-start" onClick={() => setActiveSection("tos")}>
               Terms of Service
