@@ -1,145 +1,176 @@
 "use client"
 
+import type React from "react"
+
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { ArrowLeft, CheckCircle2, DollarSign } from "lucide-react"
-import { MenuButton } from "@/components/menu-button"
-import { useRouter, useSearchParams } from "next/navigation"
 import RainBackground from "@/components/rain-background"
 import GlitterBackground from "@/components/glitter-background"
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import CashAppPayCheckout from "@/components/cashapp-checkout"
+import { MenuButton } from "@/components/menu-button"
+import ThemeToggle from "@/components/theme-toggle"
+import Logo from "@/components/logo"
+import { loadStripe } from "@stripe/stripe-js"
+import { useRouter } from "next/navigation"
+import { AlertCircle } from "lucide-react"
 
-export default function CashappPayPage() {
-  const router = useRouter()
-  const searchParams = useSearchParams()
+// Initialize Stripe
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || "")
+
+export default function CashAppPayPage() {
   const [amount, setAmount] = useState("")
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [termsAccepted, setTermsAccepted] = useState(false)
+  const router = useRouter()
 
-  // Check for success or canceled payment from Stripe
-  const success = searchParams.get("success")
-  const canceled = searchParams.get("canceled")
-  const sessionId = searchParams.get("session_id")
+  const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.replace(/[^0-9.]/g, "")
+    if (value === "" || (!isNaN(Number.parseFloat(value)) && isFinite(Number(value)))) {
+      setAmount(value)
+    }
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setLoading(true)
+    setError(null)
+
+    try {
+      // Validate input
+      if (!amount || Number.parseFloat(amount) <= 0) {
+        throw new Error("Please enter a valid amount")
+      }
+
+      if (!termsAccepted) {
+        throw new Error("You must accept the terms of service")
+      }
+
+      // Create payment session
+      const response = await fetch("/api/create-cashapp-session", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          amount: Number.parseFloat(amount),
+        }),
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || "Failed to create payment session")
+      }
+
+      const { sessionId } = await response.json()
+
+      // Redirect to Stripe Checkout
+      const stripe = await stripePromise
+      if (!stripe) {
+        throw new Error("Stripe failed to initialize")
+      }
+
+      const { error: stripeError } = await stripe.redirectToCheckout({
+        sessionId,
+      })
+
+      if (stripeError) {
+        throw new Error(stripeError.message || "Payment failed")
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "An unknown error occurred")
+    } finally {
+      setLoading(false)
+    }
+  }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#000066] via-[#4B0082] to-[#9933FF] dark:from-black dark:to-[#1a0033] p-6 relative overflow-hidden">
+    <main className="flex min-h-screen flex-col items-center justify-center p-4 sm:p-6 md:p-24 relative overflow-hidden">
       <GlitterBackground />
       <RainBackground />
+      <Logo />
       <MenuButton />
-      <Button
-        onClick={() => router.push("/")}
-        className="fixed top-4 right-4 z-50 bg-white/10 hover:bg-white/20 text-white"
-      >
-        <ArrowLeft className="w-4 h-4 mr-2" />
-        Go Back
-      </Button>
-
-      <div className="max-w-md mx-auto space-y-8 pt-16 relative z-10">
-        <div className="text-center space-y-4">
-          <h1 className="text-4xl font-bold text-white animate-text">Cash App Pay</h1>
-          <p className="text-gray-300">Fast, secure payments with Cash App</p>
-        </div>
-
-        {canceled === "true" && (
-          <Alert variant="destructive" className="bg-red-900/20 border-red-900/50">
-            <AlertTitle>Payment Canceled</AlertTitle>
-            <AlertDescription>Your payment was canceled. Please try again when you're ready.</AlertDescription>
-          </Alert>
-        )}
-
-        <Card className="bg-white/[0.03] backdrop-blur-md border-white/5 shadow-xl rounded-xl">
+      <ThemeToggle />
+      <div className="z-10 w-full max-w-md">
+        <h1 className="text-3xl sm:text-4xl font-bold text-white mb-6 sm:mb-8 text-center relative">
+          <AnimatedText>Cash App Pay</AnimatedText>
+        </h1>
+        <Card className="w-full bg-card/10 backdrop-blur-md rounded-2xl overflow-hidden shadow-lg">
           <CardHeader>
-            <CardTitle className="text-center text-white">Payment Details</CardTitle>
-            <CardDescription className="text-center text-gray-400">Enter amount and pay with Cash App</CardDescription>
+            <CardTitle className="text-2xl font-bold text-center text-foreground">Pay with Cash App</CardTitle>
+            <CardDescription className="text-center text-muted-foreground">
+              Quick and secure payments using Cash App
+            </CardDescription>
           </CardHeader>
-          <CardContent>
-            {success === "true" && sessionId ? (
-              <div className="flex flex-col items-center space-y-4 py-6">
-                <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center">
-                  <CheckCircle2 className="w-10 h-10 text-green-400" />
-                </div>
-                <h3 className="text-xl font-semibold text-white">Payment Successful</h3>
-                <p className="text-gray-300 text-center">
-                  Your payment has been initiated. Please complete the process in Cash App. Our team will process your
-                  exchange once payment is confirmed.
-                </p>
-                <Button
-                  onClick={() => {
-                    router.push("/cashapp-pay")
-                  }}
-                  className="mt-4 bg-purple-600 hover:bg-purple-700 text-white"
-                >
-                  Make Another Payment
-                </Button>
+          <form onSubmit={handleSubmit}>
+            <CardContent className="space-y-6">
+              <div className="space-y-2">
+                <Label htmlFor="amount" className="text-white">
+                  Amount (USD)
+                </Label>
+                <Input
+                  id="amount"
+                  type="text"
+                  inputMode="decimal"
+                  placeholder="Enter amount"
+                  value={amount}
+                  onChange={handleAmountChange}
+                  className="bg-white bg-opacity-20 text-white placeholder-gray-400 rounded-xl"
+                />
               </div>
-            ) : (
-              <form className="space-y-6">
-                <div className="space-y-2">
-                  <Label htmlFor="amount" className="text-white">
-                    Amount (USD)
+
+              <div className="bg-black/20 p-4 rounded-xl space-y-3">
+                <div className="flex items-center gap-2">
+                  <AlertCircle className="h-5 w-5 text-yellow-400" />
+                  <h3 className="text-white font-semibold">Terms of Service</h3>
+                </div>
+                <ul className="space-y-2 text-sm text-white/80 list-disc pl-5">
+                  <li>Payments have to be sent by you</li>
+                  <li>Payments must be sent with balance</li>
+                  <li>
+                    You must provide a screen recording of you sending the payment (Discord/Telegram chats must be shown
+                    within the screen recording)
+                  </li>
+                  <li>No sussy business</li>
+                </ul>
+                <div className="flex items-center gap-2 pt-2">
+                  <input
+                    type="checkbox"
+                    id="terms"
+                    checked={termsAccepted}
+                    onChange={(e) => setTermsAccepted(e.target.checked)}
+                    className="rounded border-gray-500 text-primary focus:ring-primary"
+                  />
+                  <Label htmlFor="terms" className="text-white text-sm">
+                    I agree to the terms of service
                   </Label>
-                  <div className="relative">
-                    <DollarSign
-                      className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-                      size={16}
-                    />
-                    <Input
-                      id="amount"
-                      type="text"
-                      inputMode="decimal"
-                      placeholder="Enter amount"
-                      value={amount}
-                      onChange={(e) => {
-                        const value = e.target.value.replace(/[^0-9.]/g, "")
-                        if (value === "" || (!isNaN(Number.parseFloat(value)) && isFinite(Number(value)))) {
-                          setAmount(value)
-                        }
-                      }}
-                      className="bg-black/20 text-white border-gray-700 focus:border-purple-500 pl-10"
-                    />
-                  </div>
                 </div>
+              </div>
 
-                <div className="border border-gray-700 rounded-lg p-4 bg-black/20">
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center">
-                      <div className="w-8 h-8 mr-2 bg-[#00D632] rounded-md flex items-center justify-center">
-                        <span className="text-white font-bold">$</span>
-                      </div>
-                      <span className="text-white font-medium">Cash App Pay</span>
-                    </div>
-                    <div className="text-xs text-gray-400">Recommended</div>
-                  </div>
-
-                  <p className="text-gray-300 text-sm mb-3">
-                    Pay directly with Cash App - quick, secure, and convenient.
-                  </p>
-
-                  <CashAppPayCheckout amount={amount} />
-                </div>
-              </form>
-            )}
-          </CardContent>
+              {error && (
+                <div className="bg-red-500/20 border border-red-500/50 text-white p-3 rounded-xl text-sm">{error}</div>
+              )}
+            </CardContent>
+            <CardFooter>
+              <Button
+                type="submit"
+                disabled={loading || !termsAccepted}
+                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold py-2 px-4 rounded-xl transition-all duration-200 transform hover:scale-105 hover:shadow-lg"
+              >
+                {loading ? "Processing..." : "Pay with Cash App"}
+              </Button>
+            </CardFooter>
+          </form>
         </Card>
-
-        <div className="bg-black/20 backdrop-blur-sm rounded-xl p-6">
-          <h3 className="text-lg font-semibold text-white mb-4 text-center">How It Works</h3>
-          <ol className="text-gray-300 text-sm space-y-3 list-decimal pl-5">
-            <li>Enter the amount you wish to send</li>
-            <li>Click "Pay with Cash App" to initiate payment</li>
-            <li>Complete the payment with a few taps in Cash App</li>
-            <li>Our team will process your exchange once payment is confirmed</li>
-          </ol>
-
-          <div className="mt-6 p-3 bg-white/5 rounded-lg">
-            <p className="text-xs text-gray-400 text-center">
-              Payments are processed securely through Stripe. Your financial information is never stored on our servers.
-            </p>
-          </div>
-        </div>
       </div>
-    </div>
+    </main>
+  )
+}
+
+function AnimatedText({ children }: { children: React.ReactNode }) {
+  return (
+    <span className="inline-block transition-transform duration-200 hover:scale-110 cursor-default">{children}</span>
   )
 }
