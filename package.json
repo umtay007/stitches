@@ -58,13 +58,10 @@
     "tailwindcss-animate": "^1.0.7",
     "vaul": "^0.9.6",
     "zod": "^3.24.1",
-    "@stripe/stripe-js": "latest",
     "@upstash/redis": "latest",
     "child_process": "latest",
     "fs": "latest",
-    "dotenv": "latest",
-    "@stripe/react-stripe-js": "latest",
-    "stripe": "latest"
+    "dotenv": "latest"
   },
   "devDependencies": {
     "@types/node": "^22",

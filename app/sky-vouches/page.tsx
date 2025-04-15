@@ -25,70 +25,17 @@ interface SkyVouch {
   }
 }
 
-// Find the skyVouches array at the beginning and add the $415 vouch at the top
 const skyVouches: SkyVouch[] = [
   {
-    username: "Sky",
-    date: "March 24, 2025 7:24 PM",
-    amount: 415.0,
-    from: "USDC SOL",
-    to: "Chime",
-    details: "USDC SOL to Chime exchange",
-    proof: {
-      type: "image",
-      url: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/IMG_0887-S9eNh.png",
-    },
-    ltcAmount: 0,
-  },
-  {
-    username: "Sky",
-    date: "March 23, 2025 6:41 PM",
-    amount: 1800.0,
+    username: "hud",
+    date: "March 22, 2025 6:03 PM",
+    amount: 1784.0,
     from: "Apple Pay",
     to: "USDC SOL",
     details: "Apple Pay to USDC SOL exchange",
     proof: {
       type: "image",
-      url: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/IMG_0888-9x3I7SrQZ3OZiv3zCBc46mcyybFgv5.jpeg",
-    },
-    ltcAmount: 0,
-  },
-  {
-    username: "Sky",
-    date: "Feb 27, 2025 3:33 PM",
-    amount: 2250.0,
-    from: "Apple Pay",
-    to: "USDC",
-    details: "Apple Pay to USDC exchange",
-    proof: {
-      type: "video",
-      url: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/1315577824483474135-qTrJcVOg7KEzjFe5zY0EjNH9ONXLpW.mp4",
-    },
-    ltcAmount: 0,
-  },
-  {
-    username: "Sky",
-    date: "Feb 26, 2025 9:15 AM",
-    amount: 3000.0,
-    from: "Apple Pay",
-    to: "USDC",
-    details: "Apple Pay to USDC exchange",
-    proof: {
-      type: "video",
-      url: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/-5563039702602171605-gGd2SMTIatOfWLT0xdOv0Rvw2B71BU.mp4",
-    },
-    ltcAmount: 0,
-  },
-  {
-    username: "Sky",
-    date: "March 23, 2025 6:39 PM",
-    amount: 1800.0,
-    from: "Apple Pay",
-    to: "USDC SOL",
-    details: "Apple Pay to USDC SOL exchange",
-    proof: {
-      type: "image",
-      url: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/IMG_0888-BMhcJ.jpeg",
+      url: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/IMG_0881-Yd9Ij9Yd9Ij9Yd9Ij9Yd9Ij9Yd9Ij9Yd9Ij9.png",
     },
     ltcAmount: 0,
   },
@@ -141,6 +88,33 @@ const skyVouches: SkyVouch[] = [
     proof: {
       type: "image",
       url: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/img-2025-03-17-17-27-56-DaBrak9hHqHIAx7WhHgWrRwQQmw73D.png",
+    },
+    ltcAmount: 0,
+  },
+  // Add these two new vouches at the beginning of the skyVouches array
+  {
+    username: "Sky",
+    date: "Feb 27, 2025 3:33 PM",
+    amount: 2250.0,
+    from: "Apple Pay",
+    to: "USDC",
+    details: "Apple Pay to USDC exchange",
+    proof: {
+      type: "video",
+      url: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/1315577824483474135-qTrJcVOg7KEzjFe5zY0EjNH9ONXLpW.mp4",
+    },
+    ltcAmount: 0,
+  },
+  {
+    username: "Sky",
+    date: "Feb 26, 2025 9:15 AM",
+    amount: 3000.0,
+    from: "Apple Pay",
+    to: "USDC",
+    details: "Apple Pay to USDC exchange",
+    proof: {
+      type: "video",
+      url: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/-5563039702602171605-gGd2SMTIatOfWLT0xdOv0Rvw2B71BU.mp4",
     },
     ltcAmount: 0,
   },
@@ -320,11 +294,11 @@ const skyVouches: SkyVouch[] = [
     from: "Skrill",
     to: "USDC",
     details: "Large crypto exchange completed",
+    ltcAmount: 25.0,
     proof: {
       type: "video",
       url: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/-2978783063471440894-f2ZfsOxhuTDMVedUt1Dm09kxaKKncg.mp4",
     },
-    ltcAmount: 25.0,
   },
   {
     username: "Sky",
@@ -901,17 +875,11 @@ export default function SkyVouchesPage() {
   } | null>(null)
 
   // Sort vouches by amount in descending order instead of date
-  const sortedVouches = [...skyVouches].sort((a, b) => (b.amount || 0) - (a.amount || 0))
+  const sortedVouches = [...skyVouches].sort((a, b) => b.amount - a.amount)
 
-  // Update the reduce operations to handle potentially undefined values
-  const totalVolume = skyVouches.reduce((sum, vouch) => sum + (vouch.amount || 0), 0)
-  const totalLTC = skyVouches.reduce((sum, vouch) => sum + (vouch.ltcAmount || 0), 0)
-  const totalUSDC = skyVouches.reduce((sum, vouch) => (vouch.to === "USDC" ? sum + (vouch.amount || 0) : sum), 0)
-
-  // Function to handle setting the proof, ensuring we never pass undefined
-  const handleSetProof = (proof: { type: "video" | "image"; url: string } | undefined) => {
-    setSelectedProof(proof || null)
-  }
+  const totalVolume = skyVouches.reduce((sum, vouch) => sum + vouch.amount, 0)
+  const totalLTC = skyVouches.reduce((sum, vouch) => sum + vouch.ltcAmount, 0)
+  const totalUSDC = skyVouches.reduce((sum, vouch) => (vouch.to === "USDC" ? sum + vouch.amount : sum), 0)
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#000066] via-[#4B0082] to-[#9933FF] dark:from-black dark:to-[#1a0033] p-6 relative overflow-hidden">
@@ -1010,7 +978,7 @@ export default function SkyVouchesPage() {
                       variant="ghost"
                       size="sm"
                       className="text-purple-300 hover:text-purple-200 hover:bg-purple-500/10"
-                      onClick={() => handleSetProof(vouch.proof)}
+                      onClick={() => setSelectedProof(vouch.proof)}
                     >
                       <FileCheck2 className="w-4 h-4 mr-1" />
                       View Proof
