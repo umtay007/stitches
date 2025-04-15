@@ -901,11 +901,12 @@ export default function SkyVouchesPage() {
   } | null>(null)
 
   // Sort vouches by amount in descending order instead of date
-  const sortedVouches = [...skyVouches].sort((a, b) => b.amount - a.amount)
+  const sortedVouches = [...skyVouches].sort((a, b) => (b.amount || 0) - (a.amount || 0))
 
-  const totalVolume = skyVouches.reduce((sum, vouch) => sum + vouch.amount, 0)
-  const totalLTC = skyVouches.reduce((sum, vouch) => sum + vouch.ltcAmount, 0)
-  const totalUSDC = skyVouches.reduce((sum, vouch) => (vouch.to === "USDC" ? sum + vouch.amount : sum), 0)
+  // Update the reduce operations to handle potentially undefined values
+  const totalVolume = skyVouches.reduce((sum, vouch) => sum + (vouch.amount || 0), 0)
+  const totalLTC = skyVouches.reduce((sum, vouch) => sum + (vouch.ltcAmount || 0), 0)
+  const totalUSDC = skyVouches.reduce((sum, vouch) => (vouch.to === "USDC" ? sum + (vouch.amount || 0) : sum), 0)
 
   // Function to handle setting the proof, ensuring we never pass undefined
   const handleSetProof = (proof: { type: "video" | "image"; url: string } | undefined) => {
