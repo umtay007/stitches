@@ -61,13 +61,19 @@ export default function PayMePage() {
     paypalButtonsContainer.innerHTML = ""
 
     // Check if PayPal SDK is properly loaded
-    if (!window.paypal || typeof window.paypal.Buttons !== "function") {
-      console.error("PayPal SDK not properly loaded. window.paypal:", window.paypal)
-      setError("PayPal checkout is temporarily unavailable. Please try again later or choose another payment method.")
+    if (!window.paypal) {
+      console.error("PayPal SDK not loaded")
+      setError("PayPal checkout is unavailable. Please try another payment method.")
       return
     }
 
     try {
+      if (typeof window.paypal.Buttons !== "function") {
+        console.error("PayPal Buttons API not available")
+        setError("PayPal checkout is unavailable. Please try another payment method.")
+        return
+      }
+
       window.paypal
         .Buttons({
           // Set up the transaction
@@ -134,11 +140,11 @@ export default function PayMePage() {
         })
         .catch((err) => {
           console.error("Failed to render PayPal buttons:", err)
-          setError("Failed to load PayPal checkout. Please try again or choose another payment method.")
+          setError("Failed to load PayPal checkout. Please try another payment method.")
         })
     } catch (err) {
       console.error("Error setting up PayPal buttons:", err)
-      setError("Failed to initialize PayPal checkout. Please try again later.")
+      setError("Failed to initialize PayPal checkout. Please try another payment method.")
     }
   }
 
@@ -157,6 +163,15 @@ export default function PayMePage() {
       return () => clearTimeout(timer)
     }
   }, [paymentMethod, amount, termsAccepted])
+
+  // Add this useEffect after the other useEffect hooks
+  useEffect(() => {
+    // Check if PayPal client ID is available
+    if (!process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID) {
+      console.error("NEXT_PUBLIC_PAYPAL_CLIENT_ID is not set or not available to the client")
+      // Don't show an error initially, only if user selects PayPal
+    }
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -222,10 +237,10 @@ export default function PayMePage() {
       {/* PayPal SDK Script */}
       {paymentMethod === "paypal" && (
         <Script
-          src={`https://www.paypal.com/sdk/js?client-id=${process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID}&currency=USD&components=buttons,funding-eligibility&debug=true`}
-          strategy="lazyOnload"
+          src={`https://www.paypal.com/sdk/js?client-id=${process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || ""}&currency=USD&components=buttons`}
+          strategy="afterInteractive"
           onLoad={() => {
-            console.log("PayPal SDK loaded")
+            console.log("PayPal SDK loaded successfully")
             // Add a small delay to ensure SDK is fully initialized
             setTimeout(() => {
               if (amount && Number.parseFloat(amount) > 0 && termsAccepted) {
@@ -234,8 +249,15 @@ export default function PayMePage() {
             }, 1000)
           }}
           onError={(e) => {
-            console.error("PayPal SDK failed to load:", e)
-            setError("Failed to load PayPal checkout. Please try again or choose another payment method.")
+            console.error(
+              "PayPal SDK failed to load:",
+              e,
+              "Client ID available:",
+              !!process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID,
+            )
+            setError("PayPal checkout is currently unavailable. Please try another payment method.")
+            // Switch to a different payment method automatically
+            setPaymentMethod("cashapp")
           }}
         />
       )}
@@ -283,7 +305,15 @@ export default function PayMePage() {
                 <Label className="text-white">Payment Method</Label>
                 <RadioGroup
                   value={paymentMethod}
-                  onValueChange={(value) => setPaymentMethod(value as "cashapp" | "wallets" | "paypal")}
+                  onValueChange={(value) => {
+                    const newMethod = value as "cashapp" | "wallets" | "paypal"
+                    if (newMethod === "paypal" && !process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID) {
+                      setError("PayPal checkout is not available. Please select another payment method.")
+                      return
+                    }
+                    setPaymentMethod(newMethod)
+                    setError(null) // Clear any previous errors when changing payment method
+                  }}
                   className="flex flex-col space-y-2"
                 >
                   <div className="flex items-center space-x-2 bg-white/10 p-3 rounded-xl cursor-pointer hover:bg-white/15 transition-colors">
@@ -396,7 +426,19 @@ export default function PayMePage() {
               )}
 
               {/* PayPal Buttons Container */}
-              {paymentMethod === "paypal" && <div id="paypal-button-container" className="mt-4"></div>}
+              {paymentMethod === "paypal" && (
+                <div className="mt-4">
+                  <div id="paypal-button-container" className="min-h-[150px]"></div>
+                  {error && (
+                    <Button
+                      onClick={() => setPaymentMethod("cashapp")}
+                      className="w-full mt-4 bg-primary hover:bg-primary/90 text-primary-foreground font-bold py-2 px-4 rounded-xl"
+                    >
+                      Try Cash App Instead
+                    </Button>
+                  )}
+                </div>
+              )}
             </CardContent>
             <CardFooter>
               {paymentMethod !== "paypal" && (

@@ -21,5 +21,8 @@ if (!PAYPAL_CLIENT_ID || !PAYPAL_CLIENT_SECRET) {
 }
 
 if (!NEXT_PUBLIC_PAYPAL_CLIENT_ID) {
-  console.warn("WARNING: PayPal public client ID is missing. Client-side PayPal buttons will not work.")
+  console.warn(
+    "WARNING: PayPal public client ID is missing or not exposed to the client. Client-side PayPal buttons will not work.",
+  )
+  console.warn("Make sure NEXT_PUBLIC_PAYPAL_CLIENT_ID is set in your environment variables.")
 }
