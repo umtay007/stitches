@@ -6,6 +6,7 @@ export async function POST(req: Request) {
 
     // Validate input
     if (!amount || amount <= 0) {
+      console.error("Invalid amount provided:", amount)
       return NextResponse.json({ error: "Invalid amount" }, { status: 400 })
     }
 
@@ -13,12 +14,17 @@ export async function POST(req: Request) {
     const clientSecret = process.env.PAYPAL_CLIENT_SECRET
 
     if (!clientId || !clientSecret) {
-      console.error("PayPal credentials missing")
+      console.error("PayPal credentials missing:", {
+        clientIdSet: !!clientId,
+        clientSecretSet: !!clientSecret,
+      })
       return NextResponse.json(
         { error: "PayPal credentials are missing. Please check your environment variables." },
         { status: 500 },
       )
     }
+
+    console.log("Creating PayPal order with amount:", amount.toFixed(2))
 
     // Get access token
     const authResponse = await fetch("https://api-m.sandbox.paypal.com/v1/oauth2/token", {
