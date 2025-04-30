@@ -14,20 +14,24 @@ import { MenuButton } from "@/components/menu-button"
 import ThemeToggle from "@/components/theme-toggle"
 import Logo from "@/components/logo"
 import { loadStripe } from "@stripe/stripe-js"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { AlertCircle } from "lucide-react"
+import { VenmoIcon } from "@/components/ui/icons"
 
 // Initialize Stripe
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || "")
 
 export default function PayMePage() {
   const [amount, setAmount] = useState("")
-  // Update the payment method state type and default value
-  const [paymentMethod, setPaymentMethod] = useState<"cashapp" | "wallets">("cashapp")
+  const [paymentMethod, setPaymentMethod] = useState<"cashapp" | "wallets" | "venmo">("cashapp")
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [termsAccepted, setTermsAccepted] = useState(false)
   const router = useRouter()
+  const searchParams = useSearchParams()
+
+  // Check if there was a canceled payment
+  const canceled = searchParams.get("canceled") === "true"
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.replace(/[^0-9.]/g, "")
@@ -51,7 +55,31 @@ export default function PayMePage() {
         throw new Error("You must accept the terms of service")
       }
 
-      // Create payment session
+      // Handle Venmo payments differently
+      if (paymentMethod === "venmo") {
+        const response = await fetch("/api/create-venmo-payment", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            amount: Number.parseFloat(amount),
+          }),
+        })
+
+        if (!response.ok) {
+          const errorData = await response.json()
+          throw new Error(errorData.error || "Failed to create Venmo payment")
+        }
+
+        const { approvalUrl } = await response.json()
+
+        // Redirect to PayPal/Venmo approval URL
+        window.location.href = approvalUrl
+        return
+      }
+
+      // For other payment methods, use Stripe
       const response = await fetch("/api/create-payment-session", {
         method: "POST",
         headers: {
@@ -85,7 +113,6 @@ export default function PayMePage() {
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "An unknown error occurred")
-    } finally {
       setLoading(false)
     }
   }
@@ -105,11 +132,17 @@ export default function PayMePage() {
           <CardHeader>
             <CardTitle className="text-2xl font-bold text-center text-foreground">Quick Payment</CardTitle>
             <CardDescription className="text-center text-muted-foreground">
-              Fast and secure payments via Cash App or Apple Pay
+              Fast and secure payments via multiple methods
             </CardDescription>
           </CardHeader>
           <form onSubmit={handleSubmit}>
             <CardContent className="space-y-6">
+              {canceled && (
+                <div className="bg-yellow-500/20 border border-yellow-500/50 text-white p-3 rounded-xl text-sm">
+                  Your previous payment was canceled. Please try again.
+                </div>
+              )}
+
               <div className="space-y-2">
                 <Label htmlFor="amount" className="text-white">
                   Amount (USD)
@@ -125,12 +158,11 @@ export default function PayMePage() {
                 />
               </div>
 
-              {/* Update the RadioGroup section to show Google Pay/Apple Pay as a single option */}
               <div className="space-y-2">
                 <Label className="text-white">Payment Method</Label>
                 <RadioGroup
                   value={paymentMethod}
-                  onValueChange={(value) => setPaymentMethod(value as "cashapp" | "wallets")}
+                  onValueChange={(value) => setPaymentMethod(value as "cashapp" | "wallets" | "venmo")}
                   className="flex flex-col space-y-2"
                 >
                   <div className="flex items-center space-x-2 bg-white/10 p-3 rounded-xl cursor-pointer hover:bg-white/15 transition-colors">
@@ -186,6 +218,13 @@ export default function PayMePage() {
                       </svg>
                     </div>
                   </div>
+                  <div className="flex items-center space-x-2 bg-white/10 p-3 rounded-xl cursor-pointer hover:bg-white/15 transition-colors">
+                    <RadioGroupItem value="venmo" id="venmo" className="text-white" />
+                    <Label htmlFor="venmo" className="text-white cursor-pointer flex-1">
+                      Venmo
+                    </Label>
+                    <VenmoIcon className="h-6 w-6" />
+                  </div>
                 </RadioGroup>
               </div>
 
@@ -227,7 +266,6 @@ export default function PayMePage() {
               )}
             </CardContent>
             <CardFooter>
-              {/* Update the submit button text */}
               <Button
                 type="submit"
                 disabled={loading || !termsAccepted}
@@ -235,7 +273,13 @@ export default function PayMePage() {
               >
                 {loading
                   ? "Processing..."
-                  : `Pay with ${paymentMethod === "cashapp" ? "Cash App" : "Google Pay/Apple Pay"}`}
+                  : `Pay with ${
+                      paymentMethod === "cashapp"
+                        ? "Cash App"
+                        : paymentMethod === "venmo"
+                          ? "Venmo"
+                          : "Google Pay/Apple Pay"
+                    }`}
               </Button>
             </CardFooter>
           </form>

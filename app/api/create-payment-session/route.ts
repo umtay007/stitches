@@ -18,12 +18,12 @@ export async function POST(req: Request) {
     const baseUrl = `${protocol}://${host}`
 
     // Validate input
-    if (!amount || amount <= 0) {
-      return NextResponse.json({ error: "Invalid amount" }, { status: 400 })
+    if (!paymentMethod || !["cashapp", "wallets", "venmo"].includes(paymentMethod)) {
+      return NextResponse.json({ error: "Invalid payment method" }, { status: 400 })
     }
 
-    if (!paymentMethod || !["cashapp", "wallets"].includes(paymentMethod)) {
-      return NextResponse.json({ error: "Invalid payment method" }, { status: 400 })
+    if (!amount || amount <= 0) {
+      return NextResponse.json({ error: "Invalid amount" }, { status: 400 })
     }
 
     // Create a Stripe Checkout Session with absolute URLs
@@ -34,7 +34,7 @@ export async function POST(req: Request) {
             currency: "usd",
             product_data: {
               name: "Stitches Exchanges Payment",
-              description: `Payment via ${paymentMethod === "cashapp" ? "Cash App" : "Google Pay/Apple Pay"}`,
+              description: `Payment via ${paymentMethod === "cashapp" ? "Cash App" : paymentMethod === "venmo" ? "Venmo" : "Google Pay/Apple Pay"}`,
             },
             unit_amount: Math.round(amount * 100), // Convert to cents
           },
@@ -46,9 +46,17 @@ export async function POST(req: Request) {
       cancel_url: `${baseUrl}/pay-me`,
     }
 
+    // Update the session options configuration to handle Venmo
     // Configure payment method based on selection
     if (paymentMethod === "cashapp") {
       sessionOptions.payment_method_types = ["cashapp"]
+    } else if (paymentMethod === "venmo") {
+      sessionOptions.payment_method_types = ["paypal"]
+      sessionOptions.payment_method_options = {
+        paypal: {
+          preferred_payment_method: "venmo",
+        },
+      }
     } else if (paymentMethod === "wallets") {
       // For Apple Pay, we'll use the card payment method
       sessionOptions.payment_method_types = ["card"]

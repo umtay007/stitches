@@ -11,8 +11,20 @@ import RainBackground from "@/components/rain-background"
 import GlitterBackground from "@/components/glitter-background"
 import { ProofModal } from "@/components/proof-modal"
 
-// Add these two new vouches at the beginning of the vouches array (before the Squashy vouch):
+// Add this new vouch at the beginning of the vouches array
 const vouches = [
+  {
+    username: "Bloody",
+    date: "4/29/25, 2:22 PM",
+    amount: 170,
+    from: "Cash App",
+    to: "Crypto",
+    details: "CASHAPP TO FUCKING. CRYPTO!! WOOHOOOOO SO FAST I LOVE IT!! YAY!!! AWESOME!!",
+    proof: {
+      type: "image",
+      url: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-a01giHTDnQnRlSltvMD9wzCq9mjft8.png",
+    },
+  },
   {
     username: "hud",
     date: "3/23/25, 10:51 AM",
