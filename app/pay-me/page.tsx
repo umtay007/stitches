@@ -14,8 +14,9 @@ import ThemeToggle from "@/components/theme-toggle"
 import Logo from "@/components/logo"
 import { loadStripe } from "@stripe/stripe-js"
 import { useRouter, useSearchParams } from "next/navigation"
-import { AlertCircle, ExternalLink } from "lucide-react"
+import { AlertCircle, ExternalLink, Loader2 } from "lucide-react"
 import { PayPalIcon, VenmoIcon } from "@/components/ui/icons"
+import Script from "next/script"
 
 // Initialize Stripe
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || "")
@@ -27,7 +28,7 @@ export default function PayMePage() {
   const [error, setError] = useState<string | null>(null)
   const [termsAccepted, setTermsAccepted] = useState(false)
   const [paypalScriptLoaded, setPaypalScriptLoaded] = useState(false)
-  const [paypalScriptError, setPaypalScriptError] = useState(false)
+  const [paypalButtonsRendered, setPaypalButtonsRendered] = useState(false)
   const paypalButtonsContainer = useRef<HTMLDivElement>(null)
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -39,48 +40,11 @@ export default function PayMePage() {
     const value = e.target.value.replace(/[^0-9.]/g, "")
     if (value === "" || (!isNaN(Number.parseFloat(value)) && isFinite(Number(value)))) {
       setAmount(value)
-    }
-  }
 
-  // Function to create a direct PayPal payment
-  const handlePayPalDirectPayment = async () => {
-    if (!amount || Number.parseFloat(amount) <= 0) {
-      setError("Please enter a valid amount")
-      return
-    }
-
-    if (!termsAccepted) {
-      setError("You must accept the terms of service")
-      return
-    }
-
-    setLoading(true)
-    setError(null)
-
-    try {
-      // Create a server-side PayPal order
-      const response = await fetch("/api/create-paypal-payment", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          amount: Number.parseFloat(amount),
-        }),
-      })
-
-      if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.error || "Failed to create PayPal payment")
+      // Reset PayPal buttons when amount changes
+      if (paymentMethod === "paypal" && paypalScriptLoaded) {
+        renderPayPalButtons()
       }
-
-      const { approvalUrl } = await response.json()
-
-      // Redirect to PayPal approval URL
-      window.location.href = approvalUrl
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to create PayPal payment")
-      setLoading(false)
     }
   }
 
@@ -126,59 +90,147 @@ export default function PayMePage() {
     }
   }
 
-  // Load PayPal SDK dynamically
-  useEffect(() => {
-    if (paymentMethod !== "paypal" || paypalScriptLoaded || paypalScriptError) {
+  // Function to render PayPal buttons
+  const renderPayPalButtons = () => {
+    if (!amount || Number.parseFloat(amount) <= 0 || !termsAccepted || !paypalScriptLoaded) {
       return
     }
 
-    const loadPayPalScript = () => {
-      try {
-        // Remove any existing PayPal script
-        const existingScript = document.getElementById("paypal-script")
-        if (existingScript) {
-          document.head.removeChild(existingScript)
-        }
+    const paypalContainer = paypalButtonsContainer.current
+    if (!paypalContainer) return
 
-        // Create a new script element
-        const script = document.createElement("script")
-        script.id = "paypal-script"
-        script.src = `https://www.paypal.com/sdk/js?client-id=${
-          process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || ""
-        }&currency=USD&intent=capture`
-        script.async = true
+    // Clear any existing buttons
+    paypalContainer.innerHTML = ""
 
-        script.onload = () => {
-          console.log("PayPal script loaded successfully")
-          setPaypalScriptLoaded(true)
-        }
-
-        script.onerror = (error) => {
-          console.error("Error loading PayPal script:", error)
-          setPaypalScriptError(true)
-          setError("PayPal checkout is currently unavailable. Please try another payment method.")
-        }
-
-        document.head.appendChild(script)
-      } catch (err) {
-        console.error("Error setting up PayPal script:", err)
-        setPaypalScriptError(true)
-        setError("PayPal checkout is currently unavailable. Please try another payment method.")
+    try {
+      if (typeof window.paypal?.Buttons !== "function") {
+        console.error("PayPal Buttons API not available")
+        setError("PayPal checkout is unavailable. Please try another payment method.")
+        return
       }
-    }
 
-    loadPayPalScript()
-  }, [paymentMethod, paypalScriptLoaded, paypalScriptError])
+      window.paypal
+        .Buttons({
+          style: {
+            layout: "horizontal",
+            color: "blue",
+            shape: "pill",
+            label: "pay",
+          },
+          // Set up the transaction
+          createOrder: async () => {
+            try {
+              setLoading(true)
+              // Create a server-side order
+              const response = await fetch("/api/create-paypal-order", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  amount: Number.parseFloat(amount),
+                }),
+              })
+
+              const orderData = await response.json()
+              if (!response.ok) {
+                throw new Error(orderData.error || "Failed to create order")
+              }
+
+              setLoading(false)
+              return orderData.id
+            } catch (err) {
+              setLoading(false)
+              console.error("Error creating order:", err)
+              setError(err instanceof Error ? err.message : "Failed to create order")
+              throw err
+            }
+          },
+          // Finalize the transaction
+          onApprove: async (data) => {
+            try {
+              setLoading(true)
+              // Capture the order
+              const response = await fetch("/api/capture-paypal-order", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  orderId: data.orderID,
+                }),
+              })
+
+              const captureData = await response.json()
+              if (!response.ok) {
+                throw new Error(captureData.error || "Failed to capture order")
+              }
+
+              // Redirect to success page
+              router.push(`/payment-success?source=paypal&order_id=${data.orderID}`)
+            } catch (err) {
+              setError(err instanceof Error ? err.message : "Failed to complete payment")
+              setLoading(false)
+            }
+          },
+          onError: (err) => {
+            console.error("PayPal button error:", err)
+            setError(`PayPal error: ${err instanceof Error ? err.message : "Unknown error"}`)
+            setLoading(false)
+          },
+          onCancel: () => {
+            console.log("Payment canceled")
+            setLoading(false)
+          },
+        })
+        .render(paypalContainer)
+        .then(() => {
+          setPaypalButtonsRendered(true)
+          console.log("PayPal buttons rendered successfully")
+        })
+        .catch((err) => {
+          console.error("Failed to render PayPal buttons:", err)
+          setError("Failed to load PayPal checkout. Please try another payment method.")
+          setLoading(false)
+        })
+    } catch (err) {
+      console.error("Error setting up PayPal buttons:", err)
+      setError("Failed to initialize PayPal checkout. Please try another payment method.")
+      setLoading(false)
+    }
+  }
+
+  // Load PayPal SDK when PayPal is selected
+  useEffect(() => {
+    if (paymentMethod === "paypal" && !paypalScriptLoaded) {
+      const clientId = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID
+      if (!clientId) {
+        console.error("NEXT_PUBLIC_PAYPAL_CLIENT_ID is not set")
+        setError("PayPal checkout is unavailable. Please try another payment method.")
+        return
+      }
+
+      // We'll handle script loading via the Script component
+      setPaypalScriptLoaded(false)
+    }
+  }, [paymentMethod, paypalScriptLoaded])
+
+  // Render PayPal buttons when script is loaded and amount/terms are valid
+  useEffect(() => {
+    if (paymentMethod === "paypal" && paypalScriptLoaded && amount && Number.parseFloat(amount) > 0 && termsAccepted) {
+      renderPayPalButtons()
+    }
+  }, [paymentMethod, paypalScriptLoaded, amount, termsAccepted])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    // Handle different payment methods
+    // If PayPal is selected, the buttons handle the payment
     if (paymentMethod === "paypal") {
-      handlePayPalDirectPayment()
       return
     }
 
+    // If Venmo is selected, use the direct Venmo payment flow
     if (paymentMethod === "venmo") {
       handleVenmoDirectPayment()
       return
@@ -237,6 +289,22 @@ export default function PayMePage() {
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-4 sm:p-6 md:p-24 relative overflow-hidden">
+      {/* PayPal SDK Script */}
+      {paymentMethod === "paypal" && (
+        <Script
+          src={`https://www.paypal.com/sdk/js?client-id=${process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || ""}&currency=USD&components=buttons`}
+          strategy="lazyOnload"
+          onLoad={() => {
+            console.log("PayPal SDK loaded successfully")
+            setPaypalScriptLoaded(true)
+          }}
+          onError={(e) => {
+            console.error("PayPal SDK failed to load:", e)
+            setError("PayPal checkout is currently unavailable. Please try another payment method.")
+          }}
+        />
+      )}
+
       <GlitterBackground />
       <RainBackground />
       <Logo />
@@ -402,17 +470,32 @@ export default function PayMePage() {
                 <div className="bg-red-500/20 border border-red-500/50 text-white p-3 rounded-xl text-sm">{error}</div>
               )}
 
-              {/* PayPal Buttons Container - Not using client-side buttons anymore */}
-              <div ref={paypalButtonsContainer} className="hidden"></div>
+              {/* PayPal Buttons Container */}
+              {paymentMethod === "paypal" && (
+                <div className="mt-4">
+                  {loading && (
+                    <div className="flex justify-center items-center py-4">
+                      <Loader2 className="h-8 w-8 text-blue-400 animate-spin" />
+                    </div>
+                  )}
+                  <div
+                    ref={paypalButtonsContainer}
+                    className={`min-h-[50px] ${!amount || Number.parseFloat(amount) <= 0 || !termsAccepted ? "opacity-50" : ""}`}
+                  ></div>
+                </div>
+              )}
             </CardContent>
             <CardFooter className="flex flex-col gap-4">
-              <Button
-                type="submit"
-                disabled={loading || !termsAccepted || !amount || Number.parseFloat(amount) <= 0}
-                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold py-2 px-4 rounded-xl transition-all duration-200 transform hover:scale-105 hover:shadow-lg"
-              >
-                {loading ? "Processing..." : `Pay with ${getPaymentMethodName(paymentMethod)}`}
-              </Button>
+              {/* Only show submit button for non-PayPal methods */}
+              {paymentMethod !== "paypal" && (
+                <Button
+                  type="submit"
+                  disabled={loading || !termsAccepted || !amount || Number.parseFloat(amount) <= 0}
+                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold py-2 px-4 rounded-xl transition-all duration-200 transform hover:scale-105 hover:shadow-lg"
+                >
+                  {loading ? "Processing..." : `Pay with ${getPaymentMethodName(paymentMethod)}`}
+                </Button>
+              )}
 
               {/* Alternative payment options */}
               <div className="text-center text-sm text-white/70">
