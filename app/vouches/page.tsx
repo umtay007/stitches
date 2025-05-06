@@ -11,8 +11,80 @@ import RainBackground from "@/components/rain-background"
 import GlitterBackground from "@/components/glitter-background"
 import { ProofModal } from "@/components/proof-modal"
 
-// Add this new vouch at the beginning of the vouches array
+// Add these new vouches to the beginning of the vouches array
 const vouches = [
+  {
+    username: "breeze",
+    date: "4/29/25, 4:17 PM",
+    amount: 50,
+    from: "Zelle",
+    to: "Crypto",
+    details: "Fast, easy, fair fee.",
+  },
+  {
+    username: "rethan350",
+    date: "4/29/25, 6:28 PM",
+    amount: 30,
+    from: "Cash App",
+    to: "Crypto",
+    details: "30ca to 26 crypto low fees!!",
+  },
+  {
+    username: "Xero",
+    date: "4/30/25, 4:45 PM",
+    amount: 85,
+    from: "PayPal",
+    to: "LTC",
+    details: "PayPal to LTC exchange",
+  },
+  {
+    username: "evie",
+    date: "4/30/25, 4:47 PM",
+    amount: 100,
+    from: "Zelle",
+    to: "LTC",
+    details: "Zelle to LTC exchange",
+  },
+  {
+    username: "Xero",
+    date: "4/30/25, 5:41 PM",
+    amount: 85,
+    from: "PayPal",
+    to: "LTC",
+    details: "PayPal to LTC exchange",
+  },
+  {
+    username: "violet",
+    date: "5/2/25, 6:36 PM",
+    amount: 105,
+    from: "PayPal",
+    to: "LTC",
+    details: "PayPal to LTC exchange (tysm)",
+  },
+  {
+    username: "Tfue",
+    date: "5/2/25, 7:08 PM",
+    amount: 35,
+    from: "Apple Pay",
+    to: "LTC",
+    details: "Apple Pay to LTC exchange (used halal mm tysm)",
+  },
+  {
+    username: "violet",
+    date: "5/4/25, 1:13 PM",
+    amount: 105,
+    from: "PayPal",
+    to: "LTC",
+    details: "PayPal to LTC exchange (tysm)",
+  },
+  {
+    username: "8c",
+    date: "5/6/25, 3:30 PM",
+    amount: 100,
+    from: "PayPal",
+    to: "LTC",
+    details: "PayPal balance to LTC exchange",
+  },
   {
     username: "Bloody",
     date: "4/29/25, 2:22 PM",

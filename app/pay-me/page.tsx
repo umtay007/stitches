@@ -21,6 +21,9 @@ import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js"
 // Initialize Stripe
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || "")
 
+// PayPal client ID - using the provided ID
+const PAYPAL_CLIENT_ID = "AXHoVhK_qALeq_xdXyGNai83K0Pu7YTP7CKhI91e3XgUs1Uimd56DFQ4OYWC3v2572Ro-qn_fvXJ_tTT"
+
 export default function PayMePage() {
   const [amount, setAmount] = useState("")
   const [paymentMethod, setPaymentMethod] = useState<"cashapp" | "wallets" | "paypal" | "venmo">("cashapp")
@@ -147,9 +150,9 @@ export default function PayMePage() {
     }
   }
 
-  // PayPal configuration
+  // PayPal configuration with the provided client ID
   const paypalOptions = {
-    clientId: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || "",
+    clientId: PAYPAL_CLIENT_ID,
     currency: "USD",
     intent: "capture",
     components: "buttons",
@@ -333,7 +336,7 @@ export default function PayMePage() {
 
               {/* PayPal Buttons */}
               {paymentMethod === "paypal" && (
-                <div className="mt-4">
+                <div className="mt-4 relative">
                   {!amount || Number.parseFloat(amount) <= 0 || !termsAccepted ? (
                     <div className="bg-gray-500/20 p-4 rounded-xl text-center text-white/70">
                       Please enter a valid amount and accept the terms to enable PayPal checkout

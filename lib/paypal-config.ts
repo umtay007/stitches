@@ -1,7 +1,8 @@
 // PayPal API configuration
 export const PAYPAL_CLIENT_ID = process.env.PAYPAL_CLIENT_ID || ""
 export const PAYPAL_CLIENT_SECRET = process.env.PAYPAL_CLIENT_SECRET || ""
-export const NEXT_PUBLIC_PAYPAL_CLIENT_ID = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || ""
+export const NEXT_PUBLIC_PAYPAL_CLIENT_ID =
+  "AXHoVhK_qALeq_xdXyGNai83K0Pu7YTP7CKhI91e3XgUs1Uimd56DFQ4OYWC3v2572Ro-qn_fvXJ_tTT"
 
 // Determine the API URL based on environment
 export const PAYPAL_API_URL =
