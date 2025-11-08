@@ -15,6 +15,7 @@ const gradientColors = {
   orange: { start: "#000000", middle: "#7c2d12", end: "#c2410c" }, // black -> dark orange -> medium orange
   applePie: { start: "#000000", middle: "#1e3a8a", end: "#831843" }, // black -> dark blue -> dark pink
   gray: { start: "#000000", middle: "#1f2937", end: "#4b5563" }, // black -> gray-800 -> gray-600
+  blackRed: { start: "#000000", middle: "#7f1d1d", end: "#dc2626" }, // black -> red-900 -> red-600
 }
 
 const glitterColors = {
@@ -26,6 +27,7 @@ const glitterColors = {
   orange: "rgba(234, 88, 12, 0.3)", // orange
   applePie: "255, 215, 0", // gold glitter for Apple Pie
   gray: "156, 163, 175", // gray-400
+  blackRed: "220, 38, 38", // red
 }
 
 const rainColors = {
@@ -37,6 +39,7 @@ const rainColors = {
   orange: "rgba(234, 88, 12, 0.3)", // orange
   applePie: "rgba(138, 43, 226, 0.3)", // purple rain for Apple Pie
   gray: "rgba(156, 163, 175, 0.3)", // gray-400
+  blackRed: "rgba(220, 38, 38, 0.3)", // red
 }
 
 const mainMembers = [
@@ -115,6 +118,16 @@ const additionalMembers = [
       "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/ezgif-3853c487283222c1-OZFvojfImsrFsDPiswxBBzcgkGsNbX.gif",
     gradient: "applePie",
   },
+  {
+    name: "Pog",
+    role: "COOL PEEPS",
+    bio: "Avid coin seller/exchanger",
+    avatar:
+      "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/f31363ff6c650dfbd3c50cbe2745ae37-af2krZRmalzZRhZKwENEqc5vvCJ3Hn.png",
+    discord: "https://discord.com/users/1298023269282091050",
+    telegram: "https://t.me/airshop_2",
+    gradient: "blackRed",
+  },
 ]
 
 const DiscordIcon = () => (
@@ -138,6 +151,7 @@ export default function MembersPage() {
   const bmwAudioRef = useRef<HTMLAudioElement | null>(null)
   const tayAudioRef = useRef<HTMLAudioElement | null>(null)
   const smallsAudioRef = useRef<HTMLAudioElement | null>(null)
+  const pogAudioRef = useRef<HTMLAudioElement | null>(null)
 
   useEffect(() => {
     applePieAudioRef.current = new Audio(
@@ -158,6 +172,10 @@ export default function MembersPage() {
       "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Freddie%20Gibbs%20-%20Skinny%20Suge%20II-EfblScl3EStgsdxHGNvjva2NBeEfoC.mp3",
     )
     smallsAudioRef.current.loop = true
+    pogAudioRef.current = new Audio(
+      "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Fivio%20Foreign%20-%20Get%20Deady-IGz2GV53CZPNbg9S0mkBrfwiDLBWhR.mp3",
+    )
+    pogAudioRef.current.loop = true
     return () => {
       if (applePieAudioRef.current) {
         applePieAudioRef.current.pause()
@@ -178,6 +196,10 @@ export default function MembersPage() {
       if (smallsAudioRef.current) {
         smallsAudioRef.current.pause()
         smallsAudioRef.current = null
+      }
+      if (pogAudioRef.current) {
+        pogAudioRef.current.pause()
+        pogAudioRef.current = null
       }
     }
   }, [])
@@ -222,6 +244,14 @@ export default function MembersPage() {
         smallsAudioRef.current.play()
       } else {
         smallsAudioRef.current.pause()
+      }
+    }
+
+    if (pogAudioRef.current) {
+      if (gradient === "blackRed") {
+        pogAudioRef.current.play()
+      } else {
+        pogAudioRef.current.pause()
       }
     }
   }
@@ -369,82 +399,152 @@ export default function MembersPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-            {additionalMembers.map((member, index) => (
-              <div
-                key={index}
-                className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-all duration-300 hover:scale-105 flex flex-col md:flex-row items-center gap-6 cursor-pointer"
-                onMouseEnter={() =>
-                  "gradient" in member
-                    ? handleGradientChange(member.gradient as keyof typeof gradientColors)
-                    : undefined
-                }
-              >
-                {/* Avatar Placeholder */}
-                {member.avatar ? (
+            {additionalMembers
+              .filter((member) => member.name !== "Pog") // Filter out Pog from the grid
+              .map((member, index) => (
+                <div
+                  key={index}
+                  className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-all duration-300 hover:scale-105 flex flex-col md:flex-row items-center gap-6 cursor-pointer"
+                  onMouseEnter={() =>
+                    "gradient" in member
+                      ? handleGradientChange(member.gradient as keyof typeof gradientColors)
+                      : undefined
+                  }
+                >
+                  {/* Avatar Placeholder */}
+                  {member.avatar ? (
+                    <img
+                      src={member.avatar || "/placeholder.svg"}
+                      alt={member.name}
+                      className="w-20 h-20 rounded-full object-contain flex-shrink-0 bg-white/5"
+                    />
+                  ) : (
+                    <div className="w-20 h-20 bg-gradient-to-br from-purple-500 to-blue-500 rounded-full flex items-center justify-center text-2xl font-bold flex-shrink-0">
+                      {member.name
+                        .split(" ")
+                        .map((n) => n[0])
+                        .join("")}
+                    </div>
+                  )}
+
+                  {/* Member Info */}
+                  <div className="flex-1 text-center md:text-left">
+                    <h3 className="text-xl font-bold mb-1">{member.name}</h3>
+                    <p className="text-purple-400 text-xs font-semibold mb-2 uppercase tracking-wide">{member.role}</p>
+                    <div className="text-gray-300 text-sm mb-3 leading-relaxed">{member.bio}</div>
+
+                    {/* Social Links */}
+                    {member.name !== "Apple Pie" && (
+                      <div className="flex gap-3 justify-center md:justify-start">
+                        {"discord" in member && member.discord && "telegram" in member && member.telegram ? (
+                          <>
+                            <a
+                              href={member.discord}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="p-2 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-lg transition-all duration-300 hover:scale-110"
+                            >
+                              <DiscordIcon />
+                            </a>
+                            <a
+                              href={member.telegram}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="p-2 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-lg transition-all duration-300 hover:scale-110"
+                            >
+                              <Send className="w-4 h-4" />
+                            </a>
+                          </>
+                        ) : "discord" in member && member.discord ? (
+                          <a
+                            href={member.discord}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="p-2 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-lg transition-all duration-300 hover:scale-110"
+                          >
+                            <DiscordIcon />
+                          </a>
+                        ) : (
+                          <>
+                            <a
+                              href={"github" in member ? member.github : "#"}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="p-2 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-lg transition-all duration-300 hover:scale-110"
+                            >
+                              <Github className="w-4 h-4" />
+                            </a>
+                            <a
+                              href={"twitter" in member ? member.twitter : "#"}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="p-2 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-lg transition-all duration-300 hover:scale-110"
+                            >
+                              <Twitter className="w-4 h-4" />
+                            </a>
+                            <a
+                              href={`mailto:${"email" in member ? member.email : ""}`}
+                              className="p-2 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-lg transition-all duration-300 hover:scale-110"
+                            >
+                              <Mail className="w-4 h-4" />
+                            </a>
+                          </>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+          </div>
+
+          {additionalMembers
+            .filter((member) => member.name === "Pog")
+            .map((member, index) => (
+              <div key={index} className="flex justify-center mt-6">
+                <div
+                  className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-all duration-300 hover:scale-105 flex flex-col md:flex-row items-center gap-6 cursor-pointer max-w-md w-full"
+                  onMouseEnter={() =>
+                    "gradient" in member
+                      ? handleGradientChange(member.gradient as keyof typeof gradientColors)
+                      : undefined
+                  }
+                >
+                  {/* Avatar */}
                   <img
                     src={member.avatar || "/placeholder.svg"}
                     alt={member.name}
                     className="w-20 h-20 rounded-full object-contain flex-shrink-0 bg-white/5"
                   />
-                ) : (
-                  <div className="w-20 h-20 bg-gradient-to-br from-purple-500 to-blue-500 rounded-full flex items-center justify-center text-2xl font-bold flex-shrink-0">
-                    {member.name
-                      .split(" ")
-                      .map((n) => n[0])
-                      .join("")}
-                  </div>
-                )}
 
-                {/* Member Info */}
-                <div className="flex-1 text-center md:text-left">
-                  <h3 className="text-xl font-bold mb-1">{member.name}</h3>
-                  <p className="text-purple-400 text-xs font-semibold mb-2 uppercase tracking-wide">{member.role}</p>
-                  <div className="text-gray-300 text-sm mb-3 leading-relaxed">{member.bio}</div>
+                  {/* Member Info */}
+                  <div className="flex-1 text-center md:text-left">
+                    <h3 className="text-xl font-bold mb-1">{member.name}</h3>
+                    <p className="text-purple-400 text-xs font-semibold mb-2 uppercase tracking-wide">{member.role}</p>
+                    <div className="text-gray-300 text-sm mb-3 leading-relaxed">{member.bio}</div>
 
-                  {/* Social Links */}
-                  {member.name !== "Apple Pie" && (
+                    {/* Social Links - left aligned */}
                     <div className="flex gap-3 justify-center md:justify-start">
-                      {"discord" in member && member.discord ? (
-                        <a
-                          href={member.discord}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="p-2 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-lg transition-all duration-300 hover:scale-110"
-                        >
-                          <DiscordIcon />
-                        </a>
-                      ) : (
-                        <>
-                          <a
-                            href={"github" in member ? member.github : "#"}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="p-2 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-lg transition-all duration-300 hover:scale-110"
-                          >
-                            <Github className="w-4 h-4" />
-                          </a>
-                          <a
-                            href={"twitter" in member ? member.twitter : "#"}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="p-2 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-lg transition-all duration-300 hover:scale-110"
-                          >
-                            <Twitter className="w-4 h-4" />
-                          </a>
-                          <a
-                            href={`mailto:${"email" in member ? member.email : ""}`}
-                            className="p-2 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-lg transition-all duration-300 hover:scale-110"
-                          >
-                            <Mail className="w-4 h-4" />
-                          </a>
-                        </>
-                      )}
+                      <a
+                        href={member.discord}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-2 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-lg transition-all duration-300 hover:scale-110"
+                      >
+                        <DiscordIcon />
+                      </a>
+                      <a
+                        href={member.telegram}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-2 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-lg transition-all duration-300 hover:scale-110"
+                      >
+                        <Send className="w-4 h-4" />
+                      </a>
                     </div>
-                  )}
+                  </div>
                 </div>
               </div>
             ))}
-          </div>
         </div>
       </div>
     </div>
