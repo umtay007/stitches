@@ -7,42 +7,42 @@ import { Github, Twitter, Mail, Send } from "lucide-react"
 import { useState, useRef, useEffect } from "react"
 
 const gradientColors = {
-  default: { start: "#000000", middle: "#000033", end: "#000099" },
-  pink: { start: "#2d0a1f", middle: "#4a1530", end: "#5c1a3d" },
-  blue: { start: "#000000", middle: "#0f172a", end: "#052e16" },
-  red: { start: "#000000", middle: "#450a0a", end: "#7f1d1d" },
-  green: { start: "#000000", middle: "#14532d", end: "#14532d" },
-  orange: { start: "#000000", middle: "#7c2d12", end: "#c2410c" },
-  applePie: { start: "#000000", middle: "#1e3a8a", end: "#831843" },
-  gray: { start: "#000000", middle: "#1f2937", end: "#4b5563" },
+  default: { start: "#000000", middle: "#000033", end: "#000099" }, // black -> dark navy -> medium blue (matches homepage)
+  pink: { start: "#2d0a1f", middle: "#4a1530", end: "#5c1a3d" }, // darker, less vibrant pink
+  blue: { start: "#000000", middle: "#0f172a", end: "#052e16" }, // black -> very dark blue -> very dark green
+  red: { start: "#000000", middle: "#450a0a", end: "#7f1d1d" }, // black -> red-950 -> red-900 (matches Sky Vouches)
+  green: { start: "#000000", middle: "#14532d", end: "#14532d" }, // dark green
+  orange: { start: "#000000", middle: "#7c2d12", end: "#c2410c" }, // black -> dark orange -> medium orange
+  applePie: { start: "#000000", middle: "#1e3a8a", end: "#831843" }, // black -> dark blue -> dark pink
+  gray: { start: "#000000", middle: "#1f2937", end: "#4b5563" }, // black -> gray-800 -> gray-600
 }
 
 const glitterColors = {
-  default: "0, 0, 153",
-  pink: "140, 50, 90",
+  default: "0, 0, 153", // medium blue (matches homepage gradient end color)
+  pink: "140, 50, 90", // muted pink
   blue: "29, 78, 216",
-  red: "220, 38, 38",
-  green: "34, 197, 94",
-  orange: "rgba(234, 88, 12, 0.3)",
-  applePie: "255, 215, 0",
-  gray: "156, 163, 175",
+  red: "220, 38, 38", // red
+  green: "34, 197, 94", // green
+  orange: "rgba(234, 88, 12, 0.3)", // orange
+  applePie: "255, 215, 0", // gold glitter for Apple Pie
+  gray: "156, 163, 175", // gray-400
 }
 
 const rainColors = {
-  default: "rgba(0, 0, 153, 0.3)",
-  pink: "rgba(140, 50, 90, 0.3)",
+  default: "rgba(0, 0, 153, 0.3)", // medium blue (matches homepage gradient end color)
+  pink: "rgba(140, 50, 90, 0.3)", // muted pink
   blue: "rgba(29, 78, 216, 0.3)",
-  red: "rgba(220, 38, 38, 0.3)",
-  green: "rgba(34, 197, 94, 0.3)",
-  orange: "rgba(234, 88, 12, 0.3)",
-  applePie: "rgba(138, 43, 226, 0.3)",
-  gray: "rgba(156, 163, 175, 0.3)",
+  red: "rgba(220, 38, 38, 0.3)", // red
+  green: "rgba(34, 197, 94, 0.3)", // green
+  orange: "rgba(234, 88, 12, 0.3)", // orange
+  applePie: "rgba(138, 43, 226, 0.3)", // purple rain for Apple Pie
+  gray: "rgba(156, 163, 175, 0.3)", // gray-400
 }
 
 const mainMembers = [
   {
     name: "Bmw",
-    role: "CO OWNER",
+    role: "CO OWNER", // Updated role from "Exchanger" to "CO OWNER"
     bio: (
       <>
         <a
@@ -76,11 +76,11 @@ const mainMembers = [
   {
     name: "Latek",
     role: "Exchanger",
-    bio: "W exchanger",
-    gradient: "gray",
+    bio: "W exchanger", // Updated bio from "Driving product strategy and user growth." to "W exchanger"
+    gradient: "gray", // Updated gradient from red to gray
     avatar:
       "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/3a15c7bda2536e491c9de707a254f628-FBnqyvfkvv6FzFAzDsZr4rmXgVJGmV.png",
-    discord: "https://discord.com/users/1267221377971257408",
+    discord: "https://discord.com/users/1267221377971257408", // Replaced github, twitter, email with discord and telegram
     telegram: "https://t.me/latekexc",
   },
 ]
@@ -135,32 +135,15 @@ export default function MembersPage() {
   const [activeGradient, setActiveGradient] = useState<keyof typeof gradientColors>("default")
   const applePieAudioRef = useRef<HTMLAudioElement | null>(null)
   const latekAudioRef = useRef<HTMLAudioElement | null>(null)
-  const [audioLoaded, setAudioLoaded] = useState(false)
 
   useEffect(() => {
-    const initAudio = () => {
-      try {
-        if (typeof window !== "undefined") {
-          applePieAudioRef.current = new Audio("/audio/loser.mp3")
-          applePieAudioRef.current.loop = false
-          applePieAudioRef.current.preload = "none"
-
-          latekAudioRef.current = new Audio("https://hebbkx1anhila5yf.public.blob.vercel-storage.com/EsDeeKid%20-%20Cali%20Man-r8mLhKV7A52NXFYPRfQd9f6Xfli5Nb.mp3")
-          latekAudioRef.current.loop = false
-          latekAudioRef.current.preload = "none"
-
-          setAudioLoaded(true)
-        }
-      } catch (error) {
-        console.error("[v0] Audio initialization error:", error)
-      }
-    }
-
-    // Delay audio init to not block page render
-    const timer = setTimeout(initAudio, 500)
-
+    applePieAudioRef.current = new Audio(
+      "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Tame%20Impala%20-%20Loser-4nRn5h2ssuFNGYkyILSuT7DSbpkvJ8.mp3",
+    )
+    applePieAudioRef.current.loop = false
+    latekAudioRef.current = new Audio("https://hebbkx1anhila5yf.public.blob.vercel-storage.com/EsDeeKid%20-%20Cali%20Man-r8mLhKV7A52NXFYPRfQd9f6Xfli5Nb.mp3")
+    latekAudioRef.current.loop = false
     return () => {
-      clearTimeout(timer)
       if (applePieAudioRef.current) {
         applePieAudioRef.current.pause()
         applePieAudioRef.current = null
@@ -175,11 +158,9 @@ export default function MembersPage() {
   const handleGradientChange = (gradient: keyof typeof gradientColors) => {
     setActiveGradient(gradient)
 
-    if (!audioLoaded) return
-
     if (applePieAudioRef.current) {
       if (gradient === "applePie") {
-        applePieAudioRef.current.play().catch(() => {})
+        applePieAudioRef.current.play()
       } else {
         applePieAudioRef.current.pause()
       }
@@ -187,7 +168,7 @@ export default function MembersPage() {
 
     if (latekAudioRef.current) {
       if (gradient === "gray") {
-        latekAudioRef.current.play().catch(() => {})
+        latekAudioRef.current.play()
       } else {
         latekAudioRef.current.pause()
       }
@@ -217,6 +198,7 @@ export default function MembersPage() {
 
       <div className="container mx-auto px-4 py-16 relative z-10">
         <div className="max-w-7xl mx-auto">
+          {/* Header */}
           <div className="text-center mb-16">
             <h1 className="text-5xl md:text-6xl font-bold mb-4 text-balance">Meet the Team</h1>
             <p className="text-xl text-gray-300 max-w-2xl mx-auto text-balance">
@@ -231,6 +213,7 @@ export default function MembersPage() {
                 className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-8 hover:bg-white/10 transition-all duration-300 hover:scale-105 cursor-pointer"
                 onMouseEnter={() => handleGradientChange(member.gradient as keyof typeof gradientColors)}
               >
+                {/* Avatar */}
                 {member.avatar ? (
                   <img
                     src={member.avatar || "/placeholder.svg"}
@@ -248,12 +231,14 @@ export default function MembersPage() {
                   </div>
                 )}
 
+                {/* Member Info */}
                 <h3 className="text-2xl font-bold mb-2 text-center">{member.name}</h3>
                 <p className="text-purple-400 text-sm font-semibold mb-4 uppercase tracking-wide text-center">
                   {member.role}
                 </p>
                 <div className="text-gray-300 text-base mb-6 leading-relaxed text-center">{member.bio}</div>
 
+                {/* Social Links */}
                 <div className="flex gap-3 justify-center">
                   {"telegram" in member && member.telegram && "oguser" in member ? (
                     <>
@@ -343,6 +328,7 @@ export default function MembersPage() {
                     : undefined
                 }
               >
+                {/* Avatar Placeholder */}
                 {member.avatar ? (
                   <img
                     src={member.avatar || "/placeholder.svg"}
@@ -358,11 +344,13 @@ export default function MembersPage() {
                   </div>
                 )}
 
+                {/* Member Info */}
                 <div className="flex-1 text-center md:text-left">
                   <h3 className="text-xl font-bold mb-1">{member.name}</h3>
                   <p className="text-purple-400 text-xs font-semibold mb-2 uppercase tracking-wide">{member.role}</p>
                   <div className="text-gray-300 text-sm mb-3 leading-relaxed">{member.bio}</div>
 
+                  {/* Social Links */}
                   {member.name !== "Apple Pie" && (
                     <div className="flex gap-3 justify-center md:justify-start">
                       {"discord" in member && member.discord ? (
