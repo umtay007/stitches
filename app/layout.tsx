@@ -1,6 +1,7 @@
 import type React from "react"
 import { Inter } from "next/font/google"
 import "./globals.css"
+import { PageTransition } from "@/components/page-transition"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -18,7 +19,9 @@ export default function RootLayout({
           sizes="any"
         />
       </head>
-      <body className={`${inter.className} transition-colors duration-300 dark`}>{children}</body>
+      <body className={`${inter.className} transition-colors duration-300 dark`}>
+        <PageTransition>{children}</PageTransition>
+      </body>
     </html>
   )
 }
