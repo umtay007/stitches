@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react"
 
-export default function RainBackground() {
+export default function RainBackground({ color = "rgba(174, 194, 224, 0.3)" }: { color?: string }) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
   useEffect(() => {
@@ -42,7 +42,7 @@ export default function RainBackground() {
         ctx!.beginPath()
         ctx!.moveTo(this.x, this.y)
         ctx!.lineTo(this.x, this.y + this.length)
-        ctx!.strokeStyle = "rgba(174, 194, 224, 0.3)" // Reduced opacity
+        ctx!.strokeStyle = color // Use color prop instead of hardcoded blue
         ctx!.lineWidth = 1
         ctx!.stroke()
       }
@@ -74,7 +74,7 @@ export default function RainBackground() {
     return () => {
       window.removeEventListener("resize", handleResize)
     }
-  }, [])
+  }, [color])
 
   return <canvas ref={canvasRef} className="absolute top-0 left-0 w-full h-full" />
 }

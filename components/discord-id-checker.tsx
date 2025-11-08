@@ -43,7 +43,7 @@ export default function DiscordIdChecker() {
   }
 
   return (
-    <Card className="w-full bg-white bg-opacity-10 backdrop-blur-md rounded-2xl overflow-hidden shadow-lg border-gray-600/20">
+    <Card className="w-full bg-card/10 backdrop-blur-md rounded-2xl overflow-hidden shadow-lg border-gray-600/20">
       <CardHeader>
         <CardTitle className="text-xl font-semibold text-white text-center">Discord ID Checker</CardTitle>
       </CardHeader>

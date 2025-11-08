@@ -42,19 +42,31 @@ export function MenuButton() {
       default:
         return (
           <div className="grid gap-4">
-            <Button variant="ghost" className="w-full justify-start" onClick={() => handleNavigation("/vouches")}>
+            <Button
+              variant="ghost"
+              className="w-full justify-start hover:text-gray-400 transition-colors duration-300"
+              onClick={() => handleNavigation("/vouches")}
+            >
               Vouches
             </Button>
-            <Button variant="ghost" className="w-full justify-start" onClick={() => setActiveSection("tos")}>
+            <Button
+              variant="ghost"
+              className="w-full justify-start hover:text-gray-400 transition-colors duration-300"
+              onClick={() => setActiveSection("tos")}
+            >
               Terms of Service
             </Button>
-            <Button variant="ghost" className="w-full justify-start" onClick={() => setActiveSection("referral")}>
+            <Button
+              variant="ghost"
+              className="w-full justify-start hover:text-gray-400 transition-colors duration-300"
+              onClick={() => setActiveSection("referral")}
+            >
               Referral System
             </Button>
             {pathname !== "/" && (
               <Button
                 variant="ghost"
-                className="w-full justify-start text-blue-400"
+                className="w-full justify-start text-blue-400 hover:text-blue-600 transition-colors duration-300"
                 onClick={() => handleNavigation("/")}
               >
                 Back to Exchange
@@ -68,7 +80,11 @@ export function MenuButton() {
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>
-        <Button variant="ghost" size="icon" className="fixed top-4 left-4 z-50">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="fixed top-4 left-4 z-50 text-white hover:bg-white/5 transition-colors duration-300"
+        >
           <Menu className="h-6 w-6" />
           <span className="sr-only">Open menu</span>
         </Button>

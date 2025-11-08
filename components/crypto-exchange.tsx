@@ -177,7 +177,7 @@ export default function CryptoExchange({ mode }: CryptoExchangeProps) {
     return (
       <Select value={value} onValueChange={setValue}>
         <SelectTrigger className="w-full sm:w-[180px] bg-transparent text-white border-gray-600/30 rounded-xl [&>span]:text-white">
-          <SelectValue placeholder={`Select ${isFiat ? "currency" : "cryptocurrency"}`} className="text-white" />
+          <SelectValue placeholder={`Select ${isFiat ? "currency" : "crypto"}`} className="text-white" />
         </SelectTrigger>
         <SelectContent className="bg-gray-800 text-white border-gray-600 rounded-xl">
           {isFiat ? (
@@ -336,7 +336,7 @@ export default function CryptoExchange({ mode }: CryptoExchangeProps) {
 function AnimatedButton({ children, ...props }: React.ButtonHTMLAttributes<HTMLButtonElement>) {
   return (
     <Button
-      className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold py-2 px-4 rounded-xl transition-all duration-200 transform hover:scale-105 hover:shadow-lg"
+      className="w-full bg-white hover:bg-white/90 text-black font-bold py-2 px-4 rounded-xl transition-all duration-200 hover:shadow-lg"
       {...props}
     >
       {children}

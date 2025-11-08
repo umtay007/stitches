@@ -26,7 +26,6 @@ interface SkyVouch {
 }
 
 const skyVouches: SkyVouch[] = [
-  // Add these two new vouches at the beginning of the skyVouches array
   {
     username: "Sky",
     date: "Feb 27, 2025 3:33 PM",
@@ -817,9 +816,9 @@ export default function SkyVouchesPage() {
   const totalUSDC = skyVouches.reduce((sum, vouch) => (vouch.to === "USDC" ? sum + vouch.amount : sum), 0)
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#000066] via-[#4B0082] to-[#9933FF] dark:from-black dark:to-[#1a0033] p-6 relative overflow-hidden">
-      <GlitterBackground />
-      <RainBackground />
+    <div className="min-h-screen bg-gradient-to-br from-black via-red-950 to-red-900 p-6 relative overflow-hidden">
+      <GlitterBackground color="220, 38, 38" />
+      <RainBackground color="rgba(220, 38, 38, 0.3)" />
       <MenuButton />
       <Button
         onClick={() => router.push("/vouches")}

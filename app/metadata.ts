@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 
 export const metadata: Metadata = {
   title: "Stitches Exchanges",
-  description: "Exchange your currency for cryptocurrency with Stitches Exchanges",
+  description: "Exchange your currency for crypto with Stitches Exchanges",
   icons: {
     icon: [
       {

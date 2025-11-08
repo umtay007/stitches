@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react"
 
-export default function GlitterBackground() {
+export default function GlitterBackground({ color = "135, 206, 235" }: { color?: string }) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
   useEffect(() => {
@@ -49,8 +49,8 @@ export default function GlitterBackground() {
       draw() {
         ctx!.beginPath()
         const gradient = ctx!.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size)
-        gradient.addColorStop(0, `rgba(135, 206, 235, ${this.alpha})`) // Light blue
-        gradient.addColorStop(1, "rgba(135, 206, 235, 0)")
+        gradient.addColorStop(0, `rgba(${color}, ${this.alpha})`)
+        gradient.addColorStop(1, `rgba(${color}, 0)`)
         ctx!.fillStyle = gradient
         ctx!.arc(this.x, this.y, this.size, 0, Math.PI * 2)
         ctx!.fill()
@@ -83,7 +83,7 @@ export default function GlitterBackground() {
     return () => {
       window.removeEventListener("resize", handleResize)
     }
-  }, [])
+  }, [color])
 
   return <canvas ref={canvasRef} className="fixed inset-0 pointer-events-none" />
 }

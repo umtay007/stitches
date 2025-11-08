@@ -1093,7 +1093,7 @@ const vouches = [
   },
   {
     username: "Zyxfly",
-    date: "2/18/25, 8:50 PM",
+    date: "2/18/2023, 8:50 PM",
     amount: 36,
     from: "Card",
     to: "USDC SOL",
@@ -1125,7 +1125,7 @@ const vouches = [
   },
   {
     username: "Zyxfly",
-    date: "2/22/25, 11:24 PM",
+    date: "2/22/2023, 11:24 PM",
     amount: 10,
     from: "Card",
     to: "USDC SOL",
@@ -1799,9 +1799,11 @@ export default function VouchesPage() {
   const vouchCount = vouches.length
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#000066] via-[#4B0082] to-[#9933FF] dark:from-black dark:to-[#1a0033] p-6 relative overflow-hidden">
-      <GlitterBackground />
-      <RainBackground />
+    <div
+      className={`min-h-screen bg-gradient-to-br from-black via-purple-950 to-purple-900 p-6 relative overflow-hidden`}
+    >
+      <GlitterBackground color="139, 92, 246" />
+      <RainBackground color="rgba(139, 92, 246, 0.3)" />
       <MenuButton />
       <div className="fixed top-4 right-4 z-50 flex gap-2">
         <Button onClick={() => router.push("/sky-vouches")} className="bg-white/10 hover:bg-white/20 text-white">

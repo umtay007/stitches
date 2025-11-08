@@ -11,7 +11,7 @@ export default function SocialLinks() {
         asChild
       >
         <a href="https://t.me/umtay0" target="_blank" rel="noopener noreferrer" className="rounded-2xl">
-          <TelegramIcon className="h-7 w-7 text-white" />
+          <TelegramIcon className="h-7 w-7 text-blue-400 hover:text-blue-300 hover:scale-110 transition-all duration-300" />
           <span className="sr-only">Join our Telegram</span>
         </a>
       </Button>
@@ -22,7 +22,7 @@ export default function SocialLinks() {
         asChild
       >
         <a href="https://discord.gg/8XQBQzHz" target="_blank" rel="noopener noreferrer" className="rounded-2xl">
-          <DiscordIcon className="h-7 w-7 text-white" />
+          <DiscordIcon className="h-7 w-7 text-indigo-400 hover:text-indigo-300 hover:scale-110 transition-all duration-300" />
           <span className="sr-only">Join our Discord</span>
         </a>
       </Button>
