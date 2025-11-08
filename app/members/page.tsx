@@ -15,7 +15,7 @@ const gradientColors = {
   orange: { start: "#000000", middle: "#7c2d12", end: "#c2410c" }, // black -> dark orange -> medium orange
   applePie: { start: "#000000", middle: "#1e3a8a", end: "#831843" }, // black -> dark blue -> dark pink
   gray: { start: "#000000", middle: "#1f2937", end: "#4b5563" }, // black -> gray-800 -> gray-600
-  blackRed: { start: "#000000", middle: "#7f1d1d", end: "#dc2626" }, // black -> red-900 -> red-600
+  blackRed: { start: "#000000", middle: "#450a0a", end: "#7f1d1d" }, // black -> red-950 -> red-900
 }
 
 const glitterColors = {
@@ -27,7 +27,7 @@ const glitterColors = {
   orange: "rgba(234, 88, 12, 0.3)", // orange
   applePie: "255, 215, 0", // gold glitter for Apple Pie
   gray: "156, 163, 175", // gray-400
-  blackRed: "220, 38, 38", // red
+  blackRed: "127, 29, 29", // darker red
 }
 
 const rainColors = {
@@ -39,7 +39,7 @@ const rainColors = {
   orange: "rgba(234, 88, 12, 0.3)", // orange
   applePie: "rgba(138, 43, 226, 0.3)", // purple rain for Apple Pie
   gray: "rgba(156, 163, 175, 0.3)", // gray-400
-  blackRed: "rgba(220, 38, 38, 0.3)", // red
+  blackRed: "rgba(127, 29, 29, 0.3)", // darker red
 }
 
 const mainMembers = [
