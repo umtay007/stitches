@@ -7,7 +7,7 @@ export default function SocialLinks() {
       <Button
         variant="ghost"
         size="icon"
-        className="bg-white bg-opacity-10 backdrop-blur-md hover:bg-opacity-20 transition-all duration-200 rounded-2xl w-12 h-12 p-2.5"
+        className="backdrop-blur-md hover:bg-white/5 transition-all duration-200 rounded-2xl w-12 h-12 p-2.5"
         asChild
       >
         <a href="https://t.me/umtay0" target="_blank" rel="noopener noreferrer" className="rounded-2xl">
@@ -18,7 +18,7 @@ export default function SocialLinks() {
       <Button
         variant="ghost"
         size="icon"
-        className="bg-white bg-opacity-10 backdrop-blur-md hover:bg-opacity-20 transition-all duration-200 rounded-2xl w-12 h-12 p-2.5"
+        className="backdrop-blur-md hover:bg-white/5 transition-all duration-200 rounded-2xl w-12 h-12 p-2.5"
         asChild
       >
         <a href="https://discord.gg/8XQBQzHz" target="_blank" rel="noopener noreferrer" className="rounded-2xl">
