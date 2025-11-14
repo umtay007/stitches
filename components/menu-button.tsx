@@ -1,12 +1,12 @@
 "use client"
 
 import { useState } from "react"
-import { Menu } from "lucide-react"
+import { Menu } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { Separator } from "@/components/ui/separator"
 import { ReferralSystem } from "@/components/referral-system"
-import { useRouter, usePathname } from "next/navigation"
+import { useRouter, usePathname } from 'next/navigation'
 
 export function MenuButton() {
   const [isOpen, setIsOpen] = useState(false)
@@ -55,6 +55,13 @@ export function MenuButton() {
               onClick={() => handleNavigation("/members")}
             >
               Members
+            </Button>
+            <Button
+              variant="ghost"
+              className="w-full justify-start hover:text-gray-400 transition-colors duration-300"
+              onClick={() => handleNavigation("/pay-me")}
+            >
+              Pay Me
             </Button>
             <Button
               variant="ghost"
