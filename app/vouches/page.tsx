@@ -340,10 +340,6 @@ const vouches = [
     from: "Cash App",
     to: "Crypto",
     details: "CASHAPP TO FUCKING. CRYPTO!! WOOHOOOOO SO FAST I LOVE IT!! YAY!!! AWESOME!!",
-    proof: {
-      type: "image",
-      url: "/images/image.png",
-    },
   },
   {
     username: "hud",
@@ -352,10 +348,6 @@ const vouches = [
     from: "Venmo",
     to: "Crypto",
     details: "Venmo to crypto exchange",
-    proof: {
-      type: "image",
-      url: "/images/img-0889.png",
-    },
   },
   {
     username: "hud",
@@ -364,10 +356,6 @@ const vouches = [
     from: "Apple Pay",
     to: "USDC SOL",
     details: "Apple Pay to USDC SOL exchange",
-    proof: {
-      type: "image",
-      url: "/images/img-0881.png",
-    },
   },
   {
     username: "leo",
@@ -440,10 +428,6 @@ const vouches = [
     from: "Apple Pay",
     to: "USDC",
     details: "Apple Pay to USDC exchange",
-    proof: {
-      type: "image",
-      url: "/images/image.png",
-    },
   },
   {
     username: "nomo",
@@ -508,10 +492,6 @@ const vouches = [
     from: "Apple Pay",
     to: "BTC",
     details: "Apple Pay to BTC exchange",
-    proof: {
-      type: "image",
-      url: "/images/image.png",
-    },
   },
   {
     username: "Furiouseagle",
