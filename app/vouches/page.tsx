@@ -12,6 +12,63 @@ import GlitterBackground from "@/components/glitter-background"
 
 const vouches = [
   {
+    username: "leo",
+    date: "11/9/25, 8:03 PM",
+    amount: 50,
+    from: "Zelle",
+    to: "LTC",
+    details: "Zelle to LTC exchange",
+  },
+  {
+    username: "fmz4",
+    date: "11/16/25, 11:12 PM",
+    amount: 125,
+    from: "Apple Pay",
+    to: "LTC",
+    details: "Apple Pay to LTC - quick and nice",
+  },
+  {
+    username: "Anonymous Trader",
+    date: "11/18/25, 10:40 PM",
+    amount: 12,
+    from: "PayPal",
+    to: "Crypto",
+    details: "PayPal to Crypto exchange",
+  },
+  {
+    username: "!Scarlett",
+    date: "11/20/25, 11:02 AM",
+    amount: 53,
+    from: "Cashapp",
+    to: "LTC",
+    details: "Cashapp to LTC exchange",
+  },
+  {
+    username: "! Hydeee",
+    date: "11/20/25, 11:10 AM",
+    amount: 490,
+    from: "Zelle/Venmo",
+    to: "LTC",
+    details: "450 Zelle + 40 Venmo to LTC",
+  },
+  {
+    username: "Agrim",
+    date: "11/20/25, 12:27 PM",
+    amount: 100,
+    from: "PayPal",
+    to: "Crypto",
+    details: "PayPal to Crypto exchange",
+  },
+  {
+    username: "lite",
+    date: "11/29/25 - 11/30/25",
+    amount: 992,
+    from: "Mixed",
+    to: "USDC",
+    details: "120 Cashapp + 500 Venmo + 100 Apple Pay + 100 Cashapp + 172 Cashapp to USDC (fast asf)",
+  },
+  // </CHANGE>
+  {
     username: "A.",
     date: "5/18/25, 6:26 PM",
     amount: 50,
@@ -19,6 +76,95 @@ const vouches = [
     to: "USDC",
     details: "PayPal to USDC exchange",
   },
+  {
+    username: "wael",
+    date: "5/26/25, 11:17 AM",
+    amount: 1000,
+    from: "Mixed",
+    to: "Mixed",
+    details: "rep @TAY 1k",
+  },
+  {
+    username: "@TAY",
+    date: "6/12/25, 1:11 AM",
+    amount: 132,
+    from: "Zelle",
+    to: "LTC",
+    details: "$132 Zelle to LTC",
+  },
+  {
+    username: "heat",
+    date: "6/24/25, 2:41 PM",
+    amount: 130,
+    from: "Cash App",
+    to: "LTC",
+    details: "Vouch @TAY 130$ Cash App for LTC",
+  },
+  {
+    username: "chatos",
+    date: "6/27/25, 7:18 PM",
+    amount: 48,
+    from: "Apple Pay",
+    to: "LTC",
+    details: "vouch @TAY $48 Apple Pay to LTC amazing fee",
+  },
+  {
+    username: "Zyguy",
+    date: "7/3/25, 9:27 PM",
+    amount: 7,
+    from: "CA",
+    to: "LTC",
+    details: "Vouch @TAY $7 CA for LTC",
+  },
+  {
+    username: "ER13S",
+    date: "7/3/25, 9:46 PM",
+    amount: 30,
+    from: "CA",
+    to: "LTC",
+    details: "Vouch @TAY $30 CA for LTC (edited)",
+  },
+  {
+    username: "snoutoutmydoctor",
+    date: "7/6/25, 10:06 PM",
+    amount: 215,
+    from: "CA",
+    to: "LTC",
+    details: "Vouch @TAY $215 CA to LTC",
+  },
+  {
+    username: "CleanedByDraco",
+    date: "7/9/25, 10:00 AM",
+    amount: 115,
+    from: "Apple Pay",
+    to: "Solana",
+    details: "vouch @TAY $115 Apple Pay to Solana",
+  },
+  {
+    username: "gzmkl",
+    date: "7/9/25, 1:23 PM",
+    amount: 28,
+    from: "Cash App",
+    to: "LTC",
+    details: "Vouch @TAY 28$ Cash App to 22$ LTC",
+  },
+  {
+    username: "Check jb server pings DM MY ALT",
+    date: "7/9/25, 2:49 PM",
+    amount: 44,
+    from: "Cashapp",
+    to: "LTC",
+    details: "Vouch @TAY 44$ Cashapp to 40$ LTC",
+  },
+  {
+    username: "abdu",
+    date: "7/10/25, 12:25 AM",
+    amount: 134,
+    from: "Venmo",
+    to: "LTC",
+    details: "Vouch @TAY 134$ Venmo to LTC",
+  },
+  // </CHANGE>
   {
     username: "kw",
     date: "5/18/25, 6:25 PM",
@@ -196,7 +342,7 @@ const vouches = [
     details: "CASHAPP TO FUCKING. CRYPTO!! WOOHOOOOO SO FAST I LOVE IT!! YAY!!! AWESOME!!",
     proof: {
       type: "image",
-      url: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-a01giHTDnQnRlSltvMD9wzCq9mjft8.png",
+      url: "/images/image.png",
     },
   },
   {
@@ -208,7 +354,7 @@ const vouches = [
     details: "Venmo to crypto exchange",
     proof: {
       type: "image",
-      url: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/IMG_0889-Yd9Ij9Yd9Ij9Yd9Ij9Yd9Ij9Yd9Ij9Yd9Ij9.png",
+      url: "/images/img-0889.png",
     },
   },
   {
@@ -220,7 +366,7 @@ const vouches = [
     details: "Apple Pay to USDC SOL exchange",
     proof: {
       type: "image",
-      url: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/IMG_0881-Yd9Ij9Yd9Ij9Yd9Ij9Yd9Ij9Yd9Ij9Yd9Ij9.png",
+      url: "/images/img-0881.png",
     },
   },
   {
@@ -296,7 +442,7 @@ const vouches = [
     details: "Apple Pay to USDC exchange",
     proof: {
       type: "image",
-      url: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-qASWZMW8sxmhTcQtIZz4Fu0oM32QOz.png",
+      url: "/images/image.png",
     },
   },
   {
@@ -364,7 +510,7 @@ const vouches = [
     details: "Apple Pay to BTC exchange",
     proof: {
       type: "image",
-      url: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-lT3ykY6U4LoO4wmK0vTIGSlFpvGL7L.png",
+      url: "/images/image.png",
     },
   },
   {
